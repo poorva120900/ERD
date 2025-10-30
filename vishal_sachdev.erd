@@ -1,0 +1,114 @@
+erdiagram RC_Models_Company
+notation=crowsfoot
+
+// Entities
+entity Customer {
+    customer_id: INTEGER key
+    first_name: VARCHAR(100)
+    last_name: VARCHAR(100)
+    address: VARCHAR(200)
+    dob: DATE
+    gender: VARCHAR(10)
+    phone: VARCHAR(20)
+}
+
+entity Campaign {
+    campaign_id: INTEGER key
+    name: VARCHAR(100)
+    start_date: DATE
+    end_date: DATE
+}
+
+entity Product {
+    product_id: INTEGER key
+    name: VARCHAR(100)
+    description: TEXT
+    manufacturer_id: INTEGER
+    scale: VARCHAR(10)
+}
+
+entity ProductCategory {
+    category_id: INTEGER key
+    name: VARCHAR(100)
+}
+
+entity Manufacturer {
+    manufacturer_id: INTEGER key
+    name: VARCHAR(100)
+    address: VARCHAR(200)
+    phone: VARCHAR(20)
+    zip_code: VARCHAR(10)
+    city: VARCHAR(50)
+}
+
+entity Invoice {
+    invoice_id: INTEGER key
+    customer_id: INTEGER
+    date: DATE
+    total_price: DECIMAL(10,2)
+    payment_condition: VARCHAR(50)
+    shipment_condition: VARCHAR(50)
+    shipment_date: DATE
+}
+
+entity InvoiceLine {
+    invoice_line_id: INTEGER key
+    invoice_id: INTEGER
+    product_id: INTEGER
+    quantity: INTEGER
+    price: DECIMAL(10,2)
+}
+
+entity Order {
+    order_id: INTEGER key
+    manufacturer_id: INTEGER
+    date: DATE
+    total_price: DECIMAL(10,2)
+    payment_condition: VARCHAR(50)
+    received_date: DATE
+}
+
+entity OrderLine {
+    order_line_id: INTEGER key
+    order_id: INTEGER
+    product_id: INTEGER
+    quantity: INTEGER
+    price: DECIMAL(10,2)
+}
+
+// Relationships
+relationship CustomerInvoice {
+    Customer[0..N | "customer"] -> Invoice[1..N | "invoice"]
+}
+
+relationship InvoiceInvoiceLine {
+    Invoice[1 | "invoice"] -> InvoiceLine[1..N | "invoice_line"]
+}
+
+relationship InvoiceLineProduct {
+    InvoiceLine[1 | "invoice_line"] -> Product[1 | "product"]
+}
+
+relationship ProductManufacturer {
+    Product[1 | "product"] -> Manufacturer[1 | "manufacturer"]
+}
+
+relationship ProductCategoryMenu {
+    ProductCategory[1..N | "category"] -> Product[1..N | "product"]
+}
+
+relationship CustomerCampaign {
+    Customer[0..N | "customer"] -> Campaign[0..N | "campaign"]
+}
+
+relationship OrderManufacturer {
+    Order[0..N | "order"] -> Manufacturer[1 | "manufacturer"]
+}
+
+relationship OrderOrderLine {
+    Order[1 | "order"] -> OrderLine[1..N | "order_line"]
+}
+
+relationship OrderLineProduct {
+    OrderLine[1 | "order_line"] -> Product[1 | "product"]
+}
