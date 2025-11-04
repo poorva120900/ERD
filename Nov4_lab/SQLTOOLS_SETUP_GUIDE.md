@@ -12,7 +12,7 @@
 2. Click the **Extensions** icon in the left sidebar (or press `Cmd+Shift+X` on Mac / `Ctrl+Shift+X` on Windows)
 3. Search for **"SQLTools"**
 4. Install **"SQLTools"** by Matheus Teixeira
-5. Search for **"SQLTools Microsoft SQL Server/Azure"**
+5. Search for **"SQLTools Microsoft SQL Server/Azure"** (or use `@tag:sqltools-driver` to see all available drivers)
 6. Install the **SQL Server driver** for SQLTools
 
 ---
