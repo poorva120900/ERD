@@ -1,0 +1,121 @@
+erdiagram RC_MODEL
+
+// Using Crow's Foot notation for restaurant categorization system
+notation=crowsfoot
+
+/*
+   Restaurant Categories (RC) Model
+   - Core entities: Restaurant, Category, Review, User
+   - Supporting entities: Location, Hours, Features
+   - Includes review system and user interactions
+   - Focuses on categorization and ratings
+*/
+
+// Main Entities
+entity Restaurant {
+    business_id: VARCHAR(22) key
+    name: VARCHAR(255)
+    is_open: INTEGER             // 1=open, 0=closed
+    price_range: VARCHAR(4)      // $, $$, $$$, $$$$
+    website: VARCHAR(255)
+    phone: VARCHAR(20)
+    rating: FLOAT derived        // Calculated from reviews
+    total_reviews: INTEGER derived
+}
+
+entity Category {
+    category_id: INTEGER key
+    name: VARCHAR(128)
+    description: TEXT
+    parent_category_id: INTEGER  // For hierarchical categories
+}
+
+entity User {
+    user_id: VARCHAR(22) key
+    name: VARCHAR(100)
+    email: VARCHAR(255)
+    join_date: DATE
+    is_elite: BOOLEAN
+}
+
+entity Review {
+    review_id: VARCHAR(22) key
+    user_id: VARCHAR(22)
+    business_id: VARCHAR(22)
+    rating: INTEGER              // 1-5 stars
+    text: TEXT
+    date: DATE
+    useful_votes: INTEGER
+    funny_votes: INTEGER
+    cool_votes: INTEGER
+}
+
+// Supporting Entities
+entity Location {
+    location_id: INTEGER key
+    business_id: VARCHAR(22)
+    address: VARCHAR(255)
+    city: VARCHAR(128)
+    state: VARCHAR(64)
+    postal_code: VARCHAR(32)
+    latitude: FLOAT
+    longitude: FLOAT
+    neighborhood: VARCHAR(100)
+}
+
+entity Hours {
+    hours_id: INTEGER key
+    business_id: VARCHAR(22)
+    day_of_week: VARCHAR(16)
+    open_time: TIME
+    close_time: TIME
+    is_overnight: BOOLEAN
+}
+
+entity Feature {
+    feature_id: INTEGER key
+    name: VARCHAR(128)
+    type: VARCHAR(50)           // e.g., amenity, service, atmosphere
+    description: TEXT
+}
+
+// Relationships
+relationship Restaurant_Categories {
+    Restaurant[1..N | "business"] -> Category[1..N | "classification"]
+}
+
+relationship Has_Location {
+    Restaurant[1..1 | "business"] -> Location[1..1 | "address"]
+}
+
+relationship Operating_Hours {
+    Restaurant[1..1 | "business"] -> Hours[0..7 | "schedule"]
+}
+
+relationship Has_Features {
+    Restaurant[1..1 | "business"] -> Feature[0..N | "amenities"]
+}
+
+relationship Writes_Review {
+    User[1..1 | "author"] -> Review[0..N | "reviews"]
+}
+
+relationship Restaurant_Review {
+    Restaurant[1..1 | "reviewed"] -> Review[0..N | "reviews"]
+}
+
+relationship Category_Hierarchy {
+    Category[0..1 | "parent"] -> Category[0..N | "subcategories"]
+}
+
+/*
+Business Rules:
+1. Each restaurant must have at least one category
+2. Categories can be hierarchical (e.g., "Food" -> "Italian" -> "Pizza")
+3. Each restaurant must have exactly one location
+4. Operating hours are optional but limited to 7 entries (days of week)
+5. Users can write multiple reviews
+6. Each review must have both a user and restaurant
+7. Reviews must include a rating (1-5 stars)
+8. Features are optional and can be shared among restaurants
+*/
